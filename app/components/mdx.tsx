@@ -17,7 +17,8 @@ function Table({ data }) {
   ))
 
   return (
-    <table>
+    <table className='border-separate border border-slate-900 border-tools-table-outline'>
+      <caption className='caption-bottom'>{data?.caption}</caption>
       <thead>
         <tr>{headers}</tr>
       </thead>

@@ -1,0 +1,90 @@
+---
+title: 'The Definitive WNBA Rookie Ranking'
+publishedAt: '2024-07-10'
+summary: 'Caitlin Clark continues to dominate with stats'
+---
+Since the NCAA Women's March Madness, I've been paying more attention to the WNBA, and was really disappointed
+to see that a lot of the advanced stats common to men's basketball weren't readily available. So I took the opportunity
+to learn some more and create the stats myself.
+
+<Table data={{headers: ['Name', 'Minutes', 'VORP'], rows: [
+    ["Caitlin Clark",761.0,1.57],
+    ["Angel Reese",629.0,1.18],
+    ["Olivia Époupa",100.0,0.22],
+    ["Cameron Brink",330.0,0.16],
+    ["Kate Martin",289.0,-0.09],
+    ["Leonie Fiebich",360.0,-0.11],
+    ["Aaliyah Edwards",439.0,-0.16],
+    ["Kamilla Cardoso",355.0,-0.42],
+    ["Stephanie Soares",165.0,-0.48],
+    ["Rickea Jackson",559.0,-0.63],
+    ["Jacy Sheldon",439.0,-0.76],
+    ["Sevgi Uzun",585.0,-1.34],
+    ["Julie Vanloo",542.0,-1.41]
+], caption: "top WNBA rookies ranked by VORP, excluding those with <100 minutes"}}/>
+
+To understand what VORP means here, first we have to look at BPM and how it works. 
+BPM stands for Box Plus/Minus, and is a metric estimating a player's contribution to points
+above the league average per 100 possessions played. A mouthful for sure but this essentially 
+just means how much a player contributes to the team while they're on the floor. 
+
+This metric is widely used in men's basketball, and while it has its drawbacks, is relatively simple 
+(no advanced box score stats), and is really good at capturing the offensive capabilities of a player.
+
+Now that we have a basic understand what BPM is, let's take a look at the top rookies by BPM:
+
+<Table data={{headers: ["Name","Minutes","BPM","OFF","DEF"], rows: [
+    ["Olivia Époupa",100.0,1.6,-5.6,7.2],
+    ["Caitlin Clark",761.0,1.3,1.6,-0.3],
+    ["Angel Reese",629.0,1.00,1.6,-0.6],
+    ["Cameron Brink",330.0,-1.2,-5.1,3.9],
+    ["Leonie Fiebich",360.0,-2.5,-2.9,0.4],
+    ["Kate Martin",289.0,-2.5,-1.8,-0.7],
+    ["Aaliyah Edwards",439.0,-2.6,-3.5,0.9],
+    ["Rickea Jackson",559.0,-3.8,-1.1,-2.7],
+    ["Kamilla Cardoso",355.0,-3.9,-2.7,-1.2],
+    ["Jacy Sheldon",439.0,-4.8,-3.2,-1.6],
+    ["Sevgi Uzun",585.0,-5.7,-4.4,-1.3],
+    ["Julie Vanloo",542.0,-6.2,-3.4,-2.8],
+    ["Stephanie Soares",165.0,-6.7,-5.3,-1.4]
+]}}/>
+
+One glance and you can see that even well-tested stats aren't free from outliers; Olivia Époupa 
+somehow snuck into the number #1 spot with a massive defensive score with 1.3 rebounds per game. This
+can happen with BPM with low minute players, which is compounded by WNBA games being slightly shorter 
+and having less games over the course of the season.
+
+Even still we can see that among the rookies, really only Caitlin Clark and Angel Reese are consistently putting
+up above-average stats in the box. This tracks with the records the two have been smashing-- Angel Reese recently 
+[broke the record for consecutive double-doubles](https://www.espn.com/wnba/story/_/id/40516082/angel-reese-sets-wnba-mark-consecutive-games-double-double) 
+(by rebounding her own missed FGs).
+
+Now that we got a sense for the top contenders, let's move on to **VORP** or Value Over Replacement Player, which I've already shown you above. VORP 
+represents the amount of points a player brings to the team vs. a replacement (bench) player. A random player off 
+the bench is expected to perform worse than average for any of several reasons, they might not fit into the context of the team, 
+they might be fresh/maladjusted, etc. VORP essentailly is BPM but cumulatively adjusted for minutes. One neat aspect of this is that 
+since instead of BPM which is calibrated to the league average, VORP is relative to replacement, so it tracks fairly linearly with salary: 
+a player with a VORP of 1.5 is literally 1.5x more valuable than a player with a VORP of 1.5.
+
+<Table data={{headers: ['Name', 'Minutes', 'VORP'], rows: [
+    ["Caitlin Clark",761.0,1.57],
+    ["Angel Reese",629.0,1.18],
+    ["Olivia Époupa",100.0,0.22],
+    ["Cameron Brink",330.0,0.16],
+    ["Kate Martin",289.0,-0.09],
+    ["Leonie Fiebich",360.0,-0.11],
+    ["Aaliyah Edwards",439.0,-0.16],
+    ["Kamilla Cardoso",355.0,-0.42],
+    ["Stephanie Soares",165.0,-0.48],
+    ["Rickea Jackson",559.0,-0.63],
+    ["Jacy Sheldon",439.0,-0.76],
+    ["Sevgi Uzun",585.0,-1.34],
+    ["Julie Vanloo",542.0,-1.41]
+], caption: "top WNBA rookies ranked by VORP, again..."}}/>
+
+All in all, while doing these stats compilations for rookies is subject to all kinds of inconsistencies, (rookies play less games,
+get less minutes so aren't fairly represented by these stats on average), I would like to expand this to cover every team and player, 
+but some adjustments to the algorithm would be likely necessary-- the coeffieicents each stat is multiplied by to calculate BPM is based
+on regressions from the men's league, which is a higher scoring league and might be negatively skewing scores for the WNBA. 
+
+Still a great exercise in data collection, cleaning and processing. Find the source code [here.](https://github.com/zfdupont/wnba-stats).

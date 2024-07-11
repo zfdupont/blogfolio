@@ -25,16 +25,19 @@ importers:
         version: 1.1.3
       '@vercel/speed-insights':
         specifier: ^1.0.9
-        version: 1.0.9(next@14.2.0-canary.62)(react@18.2.0)
+        version: 1.0.9(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
+      csv-parse:
+        specifier: ^5.5.6
+        version: 5.5.6
       geist:
         specifier: 1.2.2
-        version: 1.2.2(next@14.2.0-canary.62)
+        version: 1.2.2(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       next:
         specifier: canary
-        version: 14.2.0-canary.62(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       next-mdx-remote:
         specifier: ^4.4.1
-        version: 4.4.1(react-dom@18.2.0)(react@18.2.0)
+        version: 4.4.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       postcss:
         specifier: ^8.4.35
         version: 8.4.35
@@ -315,6 +318,9 @@ packages:
 
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  csv-parse@5.5.6:
+    resolution: {integrity: sha512-uNpm30m/AGSkLxxy7d9yRXpJQFrZzVWLFBkS+6ngPcZkw/5k3L/jjFuj7tVnEpRn+QgmiXr21nDlhCiUK4ij2A==}
 
   debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -989,9 +995,9 @@ snapshots:
     dependencies:
       server-only: 0.0.1
 
-  '@vercel/speed-insights@1.0.9(next@14.2.0-canary.62)(react@18.2.0)':
-    dependencies:
-      next: 14.2.0-canary.62(react-dom@18.2.0)(react@18.2.0)
+  '@vercel/speed-insights@1.0.9(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)':
+    optionalDependencies:
+      next: 14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react: 18.2.0
 
   acorn-jsx@5.3.2(acorn@8.11.3):
@@ -1027,6 +1033,8 @@ snapshots:
   comma-separated-tokens@2.0.3: {}
 
   csstype@3.1.3: {}
+
+  csv-parse@5.5.6: {}
 
   debug@4.3.4:
     dependencies:
@@ -1073,9 +1081,9 @@ snapshots:
 
   function-bind@1.1.2: {}
 
-  geist@1.2.2(next@14.2.0-canary.62):
+  geist@1.2.2(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)):
     dependencies:
-      next: 14.2.0-canary.62(react-dom@18.2.0)(react@18.2.0)
+      next: 14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   graceful-fs@4.2.11: {}
 
@@ -1500,7 +1508,7 @@ snapshots:
 
   nanoid@3.3.7: {}
 
-  next-mdx-remote@4.4.1(react-dom@18.2.0)(react@18.2.0):
+  next-mdx-remote@4.4.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@mdx-js/mdx': 2.3.0
       '@mdx-js/react': 2.3.0(react@18.2.0)
@@ -1511,7 +1519,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  next@14.2.0-canary.62(react-dom@18.2.0)(react@18.2.0):
+  next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@next/env': 14.2.0-canary.62
       '@swc/helpers': 0.5.5

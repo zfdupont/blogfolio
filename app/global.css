@@ -142,7 +142,9 @@ table {
   display: block;
   max-width: fit-content;
   overflow-x: auto;
-  white-space: nowrap;
+  /* white-space: nowrap; */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .title {

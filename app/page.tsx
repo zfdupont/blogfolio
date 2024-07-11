@@ -4,18 +4,17 @@ export default function Page() {
   return (
     <section>
       <h1 className="mb-8 text-2xl font-semibold tracking-tighter">
-        My Portfolio
+        About me
       </h1>
       <p className="mb-4">
-        {`I'm a Vim enthusiast and tab advocate, finding unmatched efficiency in
-        Vim's keystroke commands and tabs' flexibility for personal viewing
-        preferences. This extends to my support for static typing, where its
-        early error detection ensures cleaner code, and my preference for dark
-        mode, which eases long coding sessions by reducing eye strain.`}
+        {`Hello! I'm Zachary Dupont, a Computer Science graduate from Stony Brook University. With a strong foundation in software engineering and hands-on experience from internships at MongoDB and Walmart, I specialize in backend development data engineering, and sports analytics.`}
+      </p>
+      <p className="mb-4">
+        {`Here, you'll find entries on current projects I'm working on, development blogs detailing these projects, and my thoughts on current trends in technology.`}
       </p>
       <div className="my-8">
         <BlogPosts />
       </div>
     </section>
-  )
+  );
 }
