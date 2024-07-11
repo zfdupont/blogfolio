@@ -37,6 +37,7 @@ export default function Page(){
     ))
     return (
         <section>
+            <h1>Top WNBA Player Ranking</h1>
             <table className='border-separate border border-slate-900 border-tools-table-outline'>
                 <thead>
                     <tr>{headers}</tr>
