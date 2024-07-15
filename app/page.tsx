@@ -7,7 +7,7 @@ export default function Page() {
         About me
       </h1>
       <p className="mb-4">
-        {`Hello! I'm Zachary Dupont, a Computer Science graduate from Stony Brook University. With a strong foundation in software engineering and hands-on experience from internships at MongoDB and Walmart, I specialize in backend development data engineering, and sports analytics.`}
+        {`Hello! I'm Zachary Dupont, a Computer Science graduate from Stony Brook University. With a strong foundation in software engineering and hands-on experience from internships at MongoDB and Walmart, I specialize in backend development, data engineering, and sports analytics.`}
       </p>
       <p className="mb-4">
         {`Here, you'll find entries on current projects I'm working on, development blogs detailing these projects, and my thoughts on current trends in technology.`}
