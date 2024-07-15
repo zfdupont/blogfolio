@@ -1,8 +1,10 @@
-import { parse } from 'csv-parse';
-import * as fs from "fs";
-import * as path from "path";
+'use client'
 
-type PlayerStats = {
+import { useState, useEffect } from "react";
+import Loader from "app/components/loader";
+import axios from "axios";
+
+interface IPlayer {
     name: string,
     position: number,
     offRole: number,
@@ -10,41 +12,86 @@ type PlayerStats = {
     mpg: number,
     bpm: number,
     obpm: number,
+    dbpm: number,
     contribution: number,
     vorp: number
 }
 
 
+
 export default function Page(){
 
-    const csvFilePath = path.resolve(__dirname, '../../../../rsrc/wnba_rankings.csv');
+    const [playerData, setPlayerData] = useState<IPlayer[]>([]);
+    const [isLoading, setLoading] = useState(true);
+    const [focus, setFocus] = useState(4);
+    const [order, setOrder] = useState("DESC")
+    
+    const columns = "Rk,Name,Minutes,MPG,BPM,OFF,DEF,VORP".split(',');
 
-    const columns = "Name,Pos,Off. Role,Minutes,MPG,BPM,OFF,DEF,Contribution,VORP".split(',')
-    const fileContent = fs.readFileSync(csvFilePath, { encoding: 'utf-8' });
+    useEffect(() => {
+        let key = columns[focus];
+        switch(key){
+            case 'OFF':
+                key = 'OBPM';
+                break;
+            case 'DEF':
+                key = 'DBPM'; 
+                break;
+        }
 
-    let rowData: any[][] = fileContent.split('\n').map((row) => row.split(','));
+        axios.get(`http://127.0.0.1:5000/api/players?sort=${key}&order=${order}`)
+            .then((res) => res.data)
+            .then((playerData) => {
+                setPlayerData(playerData)
+                setLoading(false)
+            })
+    }, [focus, order]);
+    
+    const handleClick = (col: number) => {
+        if (focus === col || col === 0) {
+            setOrder(order === 'ASC' ? 'DESC' : 'ASC')
+        } else {
+            setFocus(col);
+        }
+    }
+
+    if(isLoading){
+        return <Loader />
+    }
 
     let headers = columns.map((header, index) => (
-        <th key={index}>{header}</th>
+        <th key={index} 
+            onClick={() => handleClick(index)}
+            className={`${index === focus ? 'underline bg-slate-100/25':'hover:bg-slate-100/25'}  cursor-pointer p-4`}
+            >{header}</th>
     ))
-    let rows = rowData.map((row, index) => (
-        <tr key={index}>
-        {
-        row.map((cell, cellIndex) => (
-            <td key={cellIndex}>{cell}</td>
-        ))}
+
+    let rows = playerData.filter(p => p.minutes > 250).map((player, index, arr) => (
+        <tr key={index} className="border-b-1 hover:bg-slate-100/10 text-right">
+            <td className={`${focus == 0 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-left`} >{order === 'DESC' ? index+1 : arr.length-index+1}</td>
+            <td className={`${focus == 1 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty text-left`}>{player.name}</td>
+            {/* <td>{player.position}</td>
+            <td>{player.offrole}</td> */}
+            <td className={`${focus == 2 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.minutes}</td>
+            <td className={`${focus == 3 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.mpg.toFixed(1)}</td>
+            <td className={`${focus == 4 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.bpm.toFixed(1)}</td>
+            <td className={`${focus == 5 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.obpm.toFixed(1)}</td>
+            <td className={`${focus == 6 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.dbpm.toFixed(1)}</td>
+            {/* <td>{player.contribution}</td> */}
+            <td className={`${focus == 7 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.vorp.toFixed(2)}</td>
         </tr>
-    ))
+    ));
+
     return (
-        <section>
-            <h1>Top WNBA Player Ranking</h1>
-            <table className='border-separate border border-slate-900 border-tools-table-outline'>
+        <section className="min-w-full flex flex-col justify-center items-center">
+            <h1 className="text-2xl mb-5">2024 WNBA Player Ranking</h1>
+            <p>see more about the methodology here: </p>
+            <table className="table-fixed">
                 <thead>
                     <tr>{headers}</tr>
                 </thead>
-                <tbody>{rows.slice(1)}</tbody>
+                <tbody>{rows}</tbody>
             </table>
-            {/* {rowData} */}
         </section>
     )
 }
