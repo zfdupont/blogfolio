@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Loader from "app/components/loader";
+// import { baseUrl } from 'app/sitemap';
 import axios from "axios";
 
 interface IPlayer {
@@ -39,7 +40,7 @@ export default function Page(){
                 break;
         }
 
-        axios.get(`http://127.0.0.1:5000/api/players?sort=${key}&order=${order}`)
+        axios.get(`https://zfdupont.com/api/players?sort=${key}&order=${order}`)
             .then((res) => res.data)
             .then((playerData) => {
                 setPlayerData(playerData)
@@ -85,13 +86,14 @@ export default function Page(){
     return (
         <section className="min-w-full flex flex-col justify-center items-center">
             <h1 className="text-2xl mb-5">2024 WNBA Player Ranking</h1>
-            <p>see more about the methodology here: </p>
             <table className="table-fixed">
                 <thead>
                     <tr>{headers}</tr>
                 </thead>
                 <tbody>{rows}</tbody>
             </table>
+            
+	    <a className="hover:underline" href={'https://www.basketball-reference.com/about/bpm2.html'}><p>see more about the methodology here</p></a>
         </section>
     )
 }

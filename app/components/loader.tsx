@@ -9,7 +9,7 @@ export default function Loader() {
     getLoader()
   }, [])
   return (
-    <div className='h-screen flex items-center justify-center'>
+    <div className='flex items-center justify-center'>
       <l-newtons-cradle color="gray"></l-newtons-cradle>
     </div>
   )
