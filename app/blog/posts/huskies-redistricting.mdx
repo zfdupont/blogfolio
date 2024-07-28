@@ -1,0 +1,148 @@
+---
+title: "Redistricting 101: Huskies, ReCom, and the Fight Against Gerrymandering"
+publishedAt: "2024-07-28"
+summary: "A tool to facilitate the analysis and creation of fair and effective district plans"
+---
+
+<center><center><img height="274" width="568" src="https://i.imgur.com/iQjXyKa.png" /></center></center>
+
+In recent years, the issue of fair redistricting has gained significant attention. Gerrymandering,
+the practice of manipulating electoral district boundaries to favor specific political parties,
+undermines the democratic process. To tackle this challenge, I developed a redistricting analyzer
+using GerryChain—a powerful Python library designed for generating and analyzing districting
+plans through Markov Chain Monte Carlo (MCMC) methods. Explore huskies [here.](https://huskies.zfdupont.com/)
+
+# Introducing Huskies
+
+Huskies, is a redistricting analyzer that processes state census data, generates new redistricting plans,
+and serves them to users via an HTTP server. The repository is divided into two main sections:
+
+* **Server:** A Spring HTTP server that serves plans and ensemble summaries from the database without performing any calculations.
+* **Scripts:** This section handles all calculations, generates new plans, and makes POST requests to the database after generating the plans.
+
+# Gerrymandering
+
+Gerrymandering is common lingo in political circles, but many find themselves unclear on exactly what it is. Gerrymandering is the result of political parties playing with the boundaries of voting districts to give themselves an unfair edge. The most common forms occur when a party redraws the lines so their supporters are spread out just enough to win more areas ("cracking"), or they pack the opposing party’s voters into a few districts to minimize their impact elsewhere ("packing"). This practice can lead to weirdly shaped districts that don’t really represent the community’s interests, making elections less fair and skewing political power. It's a sneaky way to tilt the playing field in politics.
+
+<center><img height="309" width="331" alt="Maryland's 3rd District, it is a fractal like shape, snaking side to side unnaturally" title="Maryland's 3rd District" src="https://i.imgur.com/GTqBUUG.png" /></center>
+
+# Algorithms Behind Plan Generation
+
+### The Theory of GerryChain
+
+GerryChain leverages MCMC methods to explore the space of possible redistricting plans. By iterating through potential plans and applying various constraints, GerryChain can generate a diverse set of districting plans for analysis. Here's a breakdown of the theory and process behind the algorithms:
+
+#### Graph Representation
+
+We represent the state as a graph where nodes correspond to geographic units (e.g., census blocks), and edges represent adjacencies between them. This graph serves as the foundation for all redistricting plans.
+
+#### Initial Partition
+
+The process begins with an initial redistricting plan, known as the initial partition. This plan is based on existing district assignments and serves as the starting point for the MCMC process.
+
+#### Proposal Mechanism (ReCom)
+
+The ReCom (Recursive Division) method is a key component of GerryChain. It works by merging adjacent districts and then re-dividing them to form new districts. This method ensures that the new districts maintain population balance and geographical contiguity.
+
+#### Markov Chain
+
+The Markov Chain iteratively moves from one plan to another by accepting or rejecting proposed plans based on the defined constraints. This process generates an ensemble of plans, providing a robust basis for statistical analysis.
+
+# Explaining Markov Chains
+
+Markov Chains are a mathematical concept used to model systems that transition from one state to another. Here’s a simplified explanation:
+
+1. **States**:
+   * Imagine a series of possible scenarios or "states" that something can be in. For example, weather conditions like sunny, rainy, or cloudy.
+2. **Transitions**:
+   * The system moves from one state to another based on certain probabilities. For example, if it's sunny today, there might be a 70% chance it stays sunny tomorrow and a 30% chance it becomes cloudy.
+3. **Memoryless Property**:
+   * Markov Chains have the property that the future state depends only on the current state, not on the sequence of events that preceded it. This is called the "memoryless" property.
+4. **Transition Matrix**:
+   * The probabilities of moving from one state to another are usually represented in a matrix called a transition matrix. Each entry in this matrix shows the probability of transitioning from one state to another.
+
+### How Markov Chains Work
+
+1. **Initial State**:
+   * Start in an initial state. For example, today’s weather is sunny.
+2. **Transitions**:
+   * Use the transition probabilities to determine the next state. If sunny, we use the probabilities (e.g., 70% sunny, 30% cloudy) to decide tomorrow’s weather.
+3. **Iterations**:
+   * Repeat this process over many steps to see how the system evolves over time.
+
+### Example: Weather Prediction
+
+* **States**: Sunny, Rainy, Cloudy.
+* **Transition Probabilities**:
+  * From Sunny: 70% Sunny, 20% Cloudy, 10% Rainy.
+  * From Rainy: 50% Rainy, 30% Cloudy, 20% Sunny.
+  * From Cloudy: 40% Cloudy, 40% Sunny, 20% Rainy.
+
+By starting in a given state and using these probabilities to move from one state to the next, we can simulate and predict future states of the system over time.
+
+### Applications
+
+Markov Chains are used in various fields, including:
+
+* **Economics**: Modeling market behavior.
+* **Biology**: Predicting population dynamics.
+* **Computer Science**: Algorithms like Google's PageRank.
+* **Game Theory**: Analyzing strategic decisions.
+
+Markov Chains help us understand and predict the behavior of complex systems by using a simple yet powerful probabilistic framework.
+
+# Explaining the ReCom Algorithm for Redistricting
+
+Redistricting is the process of drawing the boundaries of electoral districts. The ReCom algorithm is a method used to create fair and compact districting plans. Here’s how it works in simple terms:
+
+1. **Initial Setup**:
+   * Start with a map divided into small units, like precincts or blocks.
+   * These units are grouped into an initial set of districts based on current boundaries.
+2. **Merge and Split**:
+   * **Merge**: Two adjacent districts are selected and merged into one larger district.
+   * **Split**: This larger district is then split back into two districts using a method that ensures each new district has a nearly equal population and maintains geographical compactness.
+3. **Constraints**:
+   * **Population Balance**: Each new district must have a population close to the ideal number, ensuring fair representation.
+   * **Compactness**: The shape of the districts should be compact, avoiding odd or stretched shapes that might indicate gerrymandering.
+4. **Markov Chain Process**:
+   * The algorithm repeats the merge-and-split process many times, each time creating a new districting plan.
+   * This process is guided by a Markov Chain Monte Carlo (MCMC) method, which combines randomness with Markov chains to sample complex probability distributions.
+
+# Huskies in Action
+
+For each state, Huskies generates a massive batch of 10,000 districting plans using the ReCom algorithm. Here's how it all breaks down:
+
+1. **Initial Setup**:
+   * Start with the state's current district map as the baseline.
+2. **Running ReCom**:
+   * For each plan, run 1,000 iterations of the ReCom algorithm. This means merging and re-dividing districts to ensure they're balanced and compact.
+3. **Picking the Best Plans**:
+   * Out of the 10,000 plans, we cherry-pick the ones that highlight different scenarios.
+4. **Using Filters**:
+   * With the filters on the left side, you can easily switch between these scenarios and see how each one impacts the state's political landscape.
+
+By sampling a wide array of plans and showcasing key scenarios, Huskies helps you visualize and understand the effects of different redistricting strategies in a fun and informative way.
+
+When you fire up Huskies and load a state, it starts by showing you the 2022 enacted plan for that state.
+
+<center><img height="317" width="317" alt="New York's 2022 Enacted District Plan, Democrats leading with 15/26 districts" title="2022 Enacted District Plan for NY" src="https://i.imgur.com/buuRMqw.png" /></center>
+
+On the left, you'll find a bunch of filters to explore different generated plans. For example, you can see how the map looks if it's manipulated to favor Democrats.
+
+<center><img height="317" width="317" src="https://i.imgur.com/50utwiI.png" /></center>
+
+Or flip the script and check out a map favoring Republicans. Want balance? There's a filter for the most even vote split between the two parties.
+
+<center><img height="317" width="317" src="https://i.imgur.com/Ga4x8Tg.png" /></center>
+
+You can also dive into maps with the highest and lowest population differences between districts.
+
+<center><img height="317" width="317" src="https://i.imgur.com/1Aclp9H.png" /></center>
+
+These features make exploring redistricting scenarios both fun and informative, giving you a clear view of different political landscapes.
+
+# Conclusion
+
+By leveraging GerryChain and MCMC methods, Huskies generates and analyzes redistricting plans, providing valuable insights into the fairness of districting maps. Our approach ensures that the plans meet population and compactness constraints, contributing to the creation of fair and representative electoral districts. This project is a step towards addressing the challenges of gerrymandering and promoting a more democratic electoral process.
+
+Whether you are a researcher, policymaker, or an advocate for fair redistricting, Huskies offers a robust tool for generating and analyzing redistricting plans. Find the source code [here.](https://github.com/zfdupont/huskies)
