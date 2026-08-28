@@ -3,9 +3,9 @@ title: 'The Definitive WNBA Rookie Ranking'
 publishedAt: '2024-07-10'
 summary: 'Caitlin Clark continues to dominate with stats'
 ---
-Since the NCAA Women's March Madness, I've been paying more attention to the WNBA, and was really disappointed
+Since the NCAA Women's March Madness, I've been paying more attention to the WNBA and was really disappointed
 to see that a lot of the advanced stats common to men's basketball weren't readily available. So I took the opportunity
-to learn some more and create the stats myself.
+to learn more and create the stats myself.
 
 <Table data={{headers: ['Name', 'Minutes', 'VORP'], rows: [
     ["Caitlin Clark",761.0,1.57],
@@ -23,15 +23,15 @@ to learn some more and create the stats myself.
     ["Julie Vanloo",542.0,-1.41]
 ], caption: "top WNBA rookies ranked by VORP, excluding those with <100 minutes"}}/>
 
-To understand what VORP means here, first we have to look at BPM and how it works. 
-BPM stands for Box Plus/Minus, and is a metric estimating a player's contribution to points
+To understand what VORP means here, we must first look at BPM and how it works. 
+BPM stands for Box Plus/Minus and is a metric estimating a player's contribution to points
 above the league average per 100 possessions played. A mouthful for sure but this essentially 
-just means how much a player contributes to the team while they're on the floor. 
+just means how much a player contributes to the team while on the floor. 
 
-This metric is widely used in men's basketball, and while it has its drawbacks, is relatively simple 
+This metric is widely used in men's basketball, and while it has its drawbacks, is relatively simple
 (no advanced box score stats), and is really good at capturing the offensive capabilities of a player.
 
-Now that we have a basic understand what BPM is, let's take a look at the top rookies by BPM:
+Now that we have a basic understanding of what BPM is, let's take a look at the top rookies by BPM:
 
 <Table data={{headers: ["Name","Minutes","BPM","OFF","DEF"], rows: [
     ["Olivia Époupa",100.0,1.6,-5.6,7.2],
@@ -51,20 +51,20 @@ Now that we have a basic understand what BPM is, let's take a look at the top ro
 
 One glance and you can see that even well-tested stats aren't free from outliers; Olivia Époupa 
 somehow snuck into the number #1 spot with a massive defensive score with 1.3 rebounds per game. This
-can happen with BPM with low minute players, which is compounded by WNBA games being slightly shorter 
-and having less games over the course of the season.
+can happen with BPM with low-minute players, which is compounded by WNBA games being slightly shorter 
+and having fewer games over the course of the season
 
 Even still we can see that among the rookies, really only Caitlin Clark and Angel Reese are consistently putting
 up above-average stats in the box. This tracks with the records the two have been smashing-- Angel Reese recently 
 [broke the record for consecutive double-doubles](https://www.espn.com/wnba/story/_/id/40516082/angel-reese-sets-wnba-mark-consecutive-games-double-double) 
 (by rebounding her own missed FGs).
 
-Now that we got a sense for the top contenders, let's move on to **VORP** or Value Over Replacement Player, which I've already shown you above. VORP 
+Now that we have a sense of the top contenders, let's move on to **VORP** or Value Over Replacement Player, which I've already shown you above. VORP 
 represents the amount of points a player brings to the team vs. a replacement (bench) player. A random player off 
-the bench is expected to perform worse than average for any of several reasons, they might not fit into the context of the team, 
-they might be fresh/maladjusted, etc. VORP essentailly is BPM but cumulatively adjusted for minutes. One neat aspect of this is that 
-since instead of BPM which is calibrated to the league average, VORP is relative to replacement, so it tracks fairly linearly with salary: 
-a player with a VORP of 1.5 is literally 1.5x more valuable than a player with a VORP of 1.5.
+the bench is expected to perform worse than average for several reasons, they might not fit into the context of the team, 
+they might be fresh/maladjusted, etc. VORP essentially is BPM but cumulatively adjusted for minutes. One neat aspect of this is that 
+instead of BPM which is calibrated to the league average, VORP is relative to a replacement, so it tracks fairly linearly with salary: 
+A player with a VORP of 1.5 is literally 1.5x more valuable than a player with a VORP of 1.0.
 
 <Table data={{headers: ['Name', 'Minutes', 'VORP'], rows: [
     ["Caitlin Clark",761.0,1.57],
@@ -82,9 +82,11 @@ a player with a VORP of 1.5 is literally 1.5x more valuable than a player with a
     ["Julie Vanloo",542.0,-1.41]
 ], caption: "top WNBA rookies ranked by VORP, again..."}}/>
 
-All in all, while doing these stats compilations for rookies is subject to all kinds of inconsistencies, (rookies play less games,
-get less minutes so aren't fairly represented by these stats on average), I would like to expand this to cover every team and player, 
-but some adjustments to the algorithm would be likely necessary-- the coeffieicents each stat is multiplied by to calculate BPM is based
-on regressions from the men's league, which is a higher scoring league and might be negatively skewing scores for the WNBA. 
+All in all, doing these stats compilations for rookies is subject to all kinds of inconsistencies, (rookies play fewer games,
+get fewer minutes so aren't fairly represented by these stats on average), I would like to expand this to cover every team and player, 
+but some adjustments to the algorithm would be likely necessary-- the coefficients each stat is multiplied by to calculate BPM are based
+on regressions from the men's league, which is a higher-scoring league and might be negatively skewing scores for the WNBA. 
 
 Still a great exercise in data collection, cleaning and processing. Find the source code [here.](https://github.com/zfdupont/wnba-stats).
+
+I've done these same calculations for the entire WNBA league, see the results [here.](https://zfdupont.com/wnba)

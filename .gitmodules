@@ -1,0 +1,3 @@
+[submodule "projects/wnba-stats"]
+	path = projects/wnba-stats
+	url = git@github.com:zfdupont/wnba-stats.git
