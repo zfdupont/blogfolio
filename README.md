@@ -99,8 +99,8 @@ pm2 delete portfolio
 pm2 save
 ```
 
-6. Trigger the Actions workflow (push to `release` or re-run it manually); verify the container starts.
-7. After the first push, make the `ghcr.io/zfdupont/blogfolio` package public in the GitHub package settings.
+6. Trigger the Actions workflow (push to `release` or re-run it manually). The first `build-and-push` job creates the package as private. Once that job finishes and before the deploy job pulls the image on the droplet, go to GitHub package settings and make `ghcr.io/zfdupont/blogfolio` public. If the deploy job runs before you flip visibility the pull will fail; re-run the workflow after making the package public.
+7. Verify the container starts on the droplet.
 
 ### 5. Local Docker test
 
