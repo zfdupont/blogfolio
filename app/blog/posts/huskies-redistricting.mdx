@@ -8,7 +8,7 @@ summary: "A tool to facilitate the analysis and creation of fair and effective d
 
 In recent years, the issue of fair redistricting has gained significant attention. Gerrymandering,
 the practice of manipulating electoral district boundaries to favor specific political parties,
-undermines the democratic process. To tackle this challenge, I developed a redistricting analyzer
+undermines the democratic process. As a part of my classwork at Stony Brook University, I developed Huskies: a redistricting analyzer
 using GerryChain—a powerful Python library designed for generating and analyzing districting
 plans through Markov Chain Monte Carlo (MCMC) methods. Explore huskies [here.](https://huskies.zfdupont.com/)
 
@@ -19,6 +19,21 @@ and serves them to users via an HTTP server. The repository is divided into two 
 
 * **Server:** A Spring HTTP server that serves plans and ensemble summaries from the database without performing any calculations.
 * **Scripts:** This section handles all calculations, generates new plans, and makes POST requests to the database after generating the plans.
+
+We had various options for our tech stack but chose specific technologies to best meet our needs. For example, we could have used other backend frameworks like Django or Express, and different databases like PostgreSQL or MySQL. Our main concerns were respecting the structure of our data being GeoJson, and avoid having to add any unnecessary entities, given that very few writes are occuring and all plan generation is done offline. 
+
+**Backend:**
+
+* Java & Spring Boot: Powers the HTTP server, handling requests and serving data efficiently and reliably.
+* MongoDB: Stores the redistricting plans and ensemble summaries, offering flexibility and scalability for our data needs.
+Python: Runs the scripts for calculations and generating new plans, leveraging its extensive libraries for data processing and analysis.
+On the frontend, alternative choices could have included Angular or Vue for the framework, and Bootstrap or Tailwind for UI design. However, we opted for the following:
+
+**Frontend:**
+
+* React: Provides a dynamic and interactive user interface, making the application responsive and user-friendly.
+* MaterialUI: Offers a clean and responsive design for the frontend, ensuring consistency and ease of use.
+* Leaflet: Enables detailed and interactive map visualizations for viewing district plans, making geographical data easy to explore.
 
 # Gerrymandering
 
@@ -78,18 +93,14 @@ Markov Chains are a mathematical concept used to model systems that transition f
   * From Rainy: 50% Rainy, 30% Cloudy, 20% Sunny.
   * From Cloudy: 40% Cloudy, 40% Sunny, 20% Rainy.
 
-By starting in a given state and using these probabilities to move from one state to the next, we can simulate and predict future states of the system over time.
-
-### Applications
-
-Markov Chains are used in various fields, including:
+By starting in a given state and using these probabilities to move from one state to the next, we can simulate and predict future states of the system over time. Markov Chains are used in various fields, including:
 
 * **Economics**: Modeling market behavior.
 * **Biology**: Predicting population dynamics.
 * **Computer Science**: Algorithms like Google's PageRank.
 * **Game Theory**: Analyzing strategic decisions.
 
-Markov Chains help us understand and predict the behavior of complex systems by using a simple yet powerful probabilistic framework.
+For our use case, Markov Chains help us understand and predict the behavior of complex systems by using a simple yet powerful probabilistic framework.
 
 # Explaining the ReCom Algorithm for Redistricting
 
@@ -143,6 +154,6 @@ These features make exploring redistricting scenarios both fun and informative, 
 
 # Conclusion
 
-By leveraging GerryChain and MCMC methods, Huskies generates and analyzes redistricting plans, providing valuable insights into the fairness of districting maps. Our approach ensures that the plans meet population and compactness constraints, contributing to the creation of fair and representative electoral districts. This project is a step towards addressing the challenges of gerrymandering and promoting a more democratic electoral process.
+By leveraging GerryChain and MCMC methods, Huskies generates and analyzes redistricting plans, providing valuable insights into the fairness of districting maps. With the help of GerryChain plans are guaranteed to meet population and compactness constraints, contributing to the creation of fair and representative electoral districts. This project is a step towards addressing the challenges of gerrymandering and promoting a more democratic electoral process.
 
-Whether you are a researcher, policymaker, or an advocate for fair redistricting, Huskies offers a robust tool for generating and analyzing redistricting plans. Find the source code [here.](https://github.com/zfdupont/huskies)
+Whether you are a researcher, policymaker, or an advocate for fair redistricting, Huskies offers a robust tool for learning about gerrymandering and analyzing redistricting plans. Find the source code [here.](https://github.com/zfdupont/huskies)
