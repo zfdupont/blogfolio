@@ -36,9 +36,9 @@ Blog posts are `.mdx` files in `app/blog/posts/`. To add a post, drop in a new `
 
 ### WNBA feature
 
-`app/wnba/page.tsx` is a client component that fetches player rankings from an **external API** (`https://zfdupont.com/api/players?sort=...&order=...`) via axios, and renders a sortable table (click column headers to change sort key/order). Rows are filtered to players with >250 minutes.
+`app/wnba/page.tsx` is a client component that fetches EPM player ratings and upcoming-game predictions from an **external API** (`/api/epm`, `/api/predictions`, `/api/meta`) via axios, and renders a sortable ratings table plus a predictions table. The API origin is `NEXT_PUBLIC_API_BASE` (defaults to `https://zfdupont.com`). Rows are filtered to players with >500 possessions, and the page tolerates a `503` "artifacts not ready" response without rendering broken cells.
 
-That API is served by `projects/wnba-stats/`, a **git submodule** (`git@github.com:zfdupont/wnba-stats.git`). It is a Flask app (`server/app.py`) that reads `wnbabpm.csv` with pandas and returns JSON; the CSV is produced by the Box Plus/Minus (BPM) pipeline in `bpm.py`/`scrape.py`/`constants.py`. This service is deployed separately — it is not part of the Next.js build. When cloning, use `git submodule update --init` to populate it.
+That API is served by `projects/wnba-epm/`, a **git submodule** (`git@github.com:zfdupont/wnba-epm.git`). It is a read-only FastAPI service (`src/wnba_epm/api/app.py`) exposing `/epm`, `/predictions`, `/meta`, and `/health` over JSON artifacts written to `data/serve/` by the EPM (Estimated Plus-Minus) pipeline. It is deployed independently as a Docker Compose stack (`api` + daily `refresh`) behind nginx, which strips the `/api/` prefix; see `projects/wnba-epm/docs/DEPLOY.md`. It is not part of the Next.js build. When cloning, use `git submodule update --init` to populate it.
 
 ## Notes
 
