@@ -1,99 +1,179 @@
-'use client'
+"use client";
 
 import { useState, useEffect } from "react";
 import Loader from "app/components/loader";
-// import { baseUrl } from 'app/sitemap';
 import axios from "axios";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "https://zfdupont.com";
+const MIN_POSSESSIONS = 500;
+
 interface IPlayer {
-    name: string,
-    position: number,
-    offRole: number,
-    minutes: number,
-    mpg: number,
-    bpm: number,
-    obpm: number,
-    dbpm: number,
-    contribution: number,
-    vorp: number
+  player_id: number;
+  player_name: string;
+  teams: string;
+  possessions: number;
+  o_epm: number;
+  d_epm: number;
+  epm: number;
 }
 
+interface IPrediction {
+  game_id: number;
+  date: string;
+  home_name: string;
+  away_name: string;
+  pred_margin: number;
+  home_win_prob: number;
+}
 
+interface IMeta {
+  season?: number;
+}
 
-export default function Page(){
+type SortKey =
+  | "player_name"
+  | "teams"
+  | "possessions"
+  | "epm"
+  | "o_epm"
+  | "d_epm";
 
-    const [playerData, setPlayerData] = useState<IPlayer[]>([]);
-    const [isLoading, setLoading] = useState(true);
-    const [focus, setFocus] = useState(4);
-    const [order, setOrder] = useState("DESC")
-    
-    const columns = "Rk,Name,Minutes,MPG,BPM,OFF,DEF,VORP".split(',');
+const COLUMNS: { label: string; key: SortKey | null }[] = [
+  { label: "Rk", key: null },
+  { label: "Name", key: "player_name" },
+  { label: "Teams", key: "teams" },
+  { label: "Poss", key: "possessions" },
+  { label: "EPM", key: "epm" },
+  { label: "O-EPM", key: "o_epm" },
+  { label: "D-EPM", key: "d_epm" },
+];
 
-    useEffect(() => {
-        let key = columns[focus];
-        switch(key){
-            case 'OFF':
-                key = 'OBPM';
-                break;
-            case 'DEF':
-                key = 'DBPM'; 
-                break;
-        }
+export default function Page() {
+  const [players, setPlayers] = useState<IPlayer[]>([]);
+  const [predictions, setPredictions] = useState<IPrediction[]>([]);
+  const [season, setSeason] = useState<number | null>(null);
+  const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey>("epm");
+  const [order, setOrder] = useState<"ASC" | "DESC">("DESC");
 
-        axios.get(`https://zfdupont.com/api/players?sort=${key}&order=${order}`)
-            .then((res) => res.data)
-            .then((playerData) => {
-                setPlayerData(playerData)
-                setLoading(false)
-            })
-    }, [focus, order]);
-    
-    const handleClick = (col: number) => {
-        if (focus === col || col === 0) {
-            setOrder(order === 'ASC' ? 'DESC' : 'ASC')
-        } else {
-            setFocus(col);
-        }
+  useEffect(() => {
+    Promise.all([
+      axios.get<IPlayer[]>(`${API_BASE}/api/epm`),
+      axios.get<IPrediction[]>(`${API_BASE}/api/predictions`),
+      axios.get<IMeta>(`${API_BASE}/api/meta`),
+    ])
+      .then(([epmRes, predRes, metaRes]) => {
+        setPlayers(epmRes.data);
+        setPredictions(predRes.data);
+        setSeason(metaRes.data.season ?? null);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Ratings are being refreshed. Check back shortly.");
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSort = (key: SortKey | null) => {
+    if (key === null) return;
+    if (key === sortKey) {
+      setOrder(order === "ASC" ? "DESC" : "ASC");
+    } else {
+      setSortKey(key);
+      setOrder("DESC");
     }
+  };
 
-    if(isLoading){
-        return <Loader />
-    }
+  if (isLoading) return <Loader />;
 
-    let headers = columns.map((header, index) => (
-        <th key={index} 
-            onClick={() => handleClick(index)}
-            className={`${index === focus ? 'underline bg-slate-100/25':'hover:bg-slate-100/25'}  cursor-pointer p-4`}
-            >{header}</th>
-    ))
+  if (error) {
+    return (
+      <section className="min-w-full flex flex-col justify-center items-center">
+        <p>{error}</p>
+      </section>
+    );
+  }
 
-    let rows = playerData.filter(p => p.minutes > 250).map((player, index, arr) => (
-        <tr key={index} className="border-b-1 hover:bg-slate-100/10 text-right">
-            <td className={`${focus == 0 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-left`} >{order === 'DESC' ? index+1 : arr.length-index+1}</td>
-            <td className={`${focus == 1 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty text-left`}>{player.name}</td>
-            {/* <td>{player.position}</td>
-            <td>{player.offrole}</td> */}
-            <td className={`${focus == 2 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.minutes}</td>
-            <td className={`${focus == 3 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.mpg.toFixed(1)}</td>
-            <td className={`${focus == 4 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.bpm.toFixed(1)}</td>
-            <td className={`${focus == 5 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.obpm.toFixed(1)}</td>
-            <td className={`${focus == 6 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.dbpm.toFixed(1)}</td>
-            {/* <td>{player.contribution}</td> */}
-            <td className={`${focus == 7 ? 'bg-slate-100/25':'hover:bg-slate-100/25'} text-pretty`}>{player.vorp.toFixed(2)}</td>
-        </tr>
+  const rows = players
+    .filter((p) => p.possessions > MIN_POSSESSIONS)
+    .sort((a, b) => {
+      const av = a[sortKey];
+      const bv = b[sortKey];
+      const cmp =
+        typeof av === "number" && typeof bv === "number"
+          ? av - bv
+          : String(av).localeCompare(String(bv));
+      return order === "ASC" ? cmp : -cmp;
+    });
+
+  const headers = COLUMNS.map((col, index) => (
+    <th
+      key={index}
+      onClick={() => handleSort(col.key)}
+      className={`${col.key === sortKey ? "underline bg-slate-100/25" : "hover:bg-slate-100/25"} ${col.key ? "cursor-pointer" : ""} p-4`}
+    >
+      {col.label}
+    </th>
+  ));
+
+  const body = rows.map((player, index) => (
+    <tr
+      key={player.player_id}
+      className="border-b-1 hover:bg-slate-100/10 text-right"
+    >
+      <td className="text-left">{index + 1}</td>
+      <td className="text-pretty text-left">{player.player_name}</td>
+      <td className="text-pretty">{player.teams}</td>
+      <td className="text-pretty">{Math.round(player.possessions)}</td>
+      <td className="text-pretty">{player.epm.toFixed(1)}</td>
+      <td className="text-pretty">{player.o_epm.toFixed(1)}</td>
+      <td className="text-pretty">{player.d_epm.toFixed(1)}</td>
+    </tr>
+  ));
+
+  const upcoming = [...predictions]
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .map((g) => (
+      <tr
+        key={g.game_id}
+        className="border-b-1 hover:bg-slate-100/10 text-right"
+      >
+        <td className="text-left p-2">
+          {g.away_name} @ {g.home_name}
+        </td>
+        <td className="p-2">{g.pred_margin.toFixed(1)}</td>
+        <td className="p-2">{(g.home_win_prob * 100).toFixed(0)}%</td>
+      </tr>
     ));
 
-    return (
-        <section className="min-w-full flex flex-col justify-center items-center">
-            <h1 className="text-2xl mb-5">2024 WNBA Player Ranking</h1>
-            <table className="table-fixed">
-                <thead>
-                    <tr>{headers}</tr>
-                </thead>
-                <tbody>{rows}</tbody>
-            </table>
-            
-	    <a className="hover:underline" href={'https://www.basketball-reference.com/about/bpm2.html'}><p>see more about the methodology here</p></a>
-        </section>
-    )
+  return (
+    <section className="min-w-full flex flex-col justify-center items-center">
+      <h1 className="text-2xl mb-5">
+        {season ? `${season} ` : ""}WNBA Player Ranking (EPM)
+      </h1>
+      <table className="table-fixed">
+        <thead>
+          <tr>{headers}</tr>
+        </thead>
+        <tbody>{body}</tbody>
+      </table>
+
+      {upcoming.length > 0 && (
+        <>
+          <h2 className="text-xl mt-10 mb-3">Upcoming Game Predictions</h2>
+          <table className="table-fixed">
+            <thead>
+              <tr>
+                <th className="p-2 text-left">Matchup</th>
+                <th className="p-2">Pred Margin</th>
+                <th className="p-2">Home Win %</th>
+              </tr>
+            </thead>
+            <tbody>{upcoming}</tbody>
+          </table>
+        </>
+      )}
+    </section>
+  );
 }
