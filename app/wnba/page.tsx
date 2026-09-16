@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Loader from "app/components/loader";
+import Dropdown from "app/components/dropdown";
 import axios from "axios";
 
 const API_BASE =
@@ -49,6 +50,14 @@ const COLUMNS: { label: string; key: SortKey | null }[] = [
   { label: "D-EPM", key: "d_epm" },
 ];
 
+type View = "players" | "teams" | "predictions";
+
+const VIEWS: { label: string; value: View }[] = [
+  { label: "Player EPM Ratings", value: "players" },
+  { label: "Team EPM Ratings", value: "teams" },
+  { label: "Game Predictions", value: "predictions" },
+];
+
 export default function Page() {
   const [players, setPlayers] = useState<IPlayer[]>([]);
   const [predictions, setPredictions] = useState<IPrediction[]>([]);
@@ -57,6 +66,7 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>("epm");
   const [order, setOrder] = useState<"ASC" | "DESC">("DESC");
+  const [view, setView] = useState<View>("players");
 
   useEffect(() => {
     Promise.all([
@@ -150,19 +160,26 @@ export default function Page() {
 
   return (
     <section className="min-w-full flex flex-col justify-center items-center">
-      <h1 className="text-2xl mb-5">
-        {season ? `${season} ` : ""}WNBA Player Ranking (EPM)
-      </h1>
-      <table className="table-fixed">
-        <thead>
-          <tr>{headers}</tr>
-        </thead>
-        <tbody>{body}</tbody>
-      </table>
+      <h1 className="text-2xl mb-5">{season ? `${season} ` : ""}WNBA</h1>
+      <div className="mb-8">
+        <Dropdown<View> options={VIEWS} value={view} onChange={setView} />
+      </div>
 
-      {upcoming.length > 0 && (
-        <>
-          <h2 className="text-xl mt-10 mb-3">Upcoming Game Predictions</h2>
+      {view === "players" && (
+        <table className="table-fixed">
+          <thead>
+            <tr>{headers}</tr>
+          </thead>
+          <tbody>{body}</tbody>
+        </table>
+      )}
+
+      {view === "teams" && (
+        <p className="text-neutral-500 mt-4">Team EPM ratings coming soon.</p>
+      )}
+
+      {view === "predictions" &&
+        (upcoming.length > 0 ? (
           <table className="table-fixed">
             <thead>
               <tr>
@@ -173,8 +190,9 @@ export default function Page() {
             </thead>
             <tbody>{upcoming}</tbody>
           </table>
-        </>
-      )}
+        ) : (
+          <p className="text-neutral-500 mt-4">No upcoming games to predict.</p>
+        ))}
     </section>
   );
 }
