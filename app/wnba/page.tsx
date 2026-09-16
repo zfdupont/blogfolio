@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Loader from "app/components/loader";
 import axios from "axios";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "https://zfdupont.com";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE ?? "https://wnba.zfdupont.com";
 const MIN_POSSESSIONS = 500;
 
 interface IPlayer {
