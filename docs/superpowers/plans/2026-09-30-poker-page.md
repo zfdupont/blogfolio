@@ -279,7 +279,7 @@ git commit -m "feat(poker): add /poker page, nav link, sitemap entry"
 
 ---
 
-### Task 5: Polish, responsive, and end-to-end smoke
+### Task 5: Polish and responsive
 
 **Files:**
 - Modify: the Task 3 components + `app/poker/page.tsx`
@@ -290,17 +290,11 @@ Card flip + chip/pot transitions (`transition-all`, `duration-200`), a muted-by-
 
 - [ ] **Step 2: Responsive**
 
-Table stacks vertically under `sm:`; action buttons wrap; the page breaks out of `max-w-3xl` with a wider inner container (`max-w-4xl`) if needed.
+Table stacks vertically under `sm:`; action buttons wrap; the page breaks out of `max-w-3xl` with a wider inner container (`max-w-4xl`).
 
-- [ ] **Step 3: End-to-end smoke against a local service**
+- [ ] **Step 3: Build**
 
-Run the service from the pokerbot worktree:
-```bash
-cd /Users/zfdupont/pokerbot/.worktrees/poker-web
-POKERBOT_CHECKPOINT=/Users/zfdupont/pokerbot/sixmax/checkpoints/blueprint.bin \
-  uv run python -m web.main --port 8100
-```
-Then in blogfolio: `NEXT_PUBLIC_POKER_API=http://127.0.0.1:8100 pnpm dev`, open `/poker`, play a few hands, reload mid-hand (resume), finish a hand, and force a bust/rebuy.
+Run: `pnpm build` (succeeds).
 
 - [ ] **Step 4: Commit**
 
@@ -308,6 +302,82 @@ Then in blogfolio: `NEXT_PUBLIC_POKER_API=http://127.0.0.1:8100 pnpm dev`, open 
 git add app/poker
 git commit -m "feat(poker): polish — animations, sound toggle, responsive table"
 ```
+
+---
+
+### Task 6: Playwright end-to-end tests
+
+**Files:**
+- Create: `playwright.config.ts`, `e2e/poker.spec.ts`
+- Modify: `package.json` (add `@playwright/test` devDep + `"test:e2e": "playwright test"`)
+
+**Interfaces:**
+- Consumes: the built `/poker` page. The API is mocked in-browser via `page.route` (same-origin), so no running service is required and the tests run in CI.
+
+- [ ] **Step 1: Add Playwright**
+
+`package.json`: `"@playwright/test"` devDep + `"test:e2e": "playwright test"`; `pnpm install`; `pnpm exec playwright install chromium`.
+
+- [ ] **Step 2: `playwright.config.ts`**
+
+```ts
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./e2e",
+  timeout: 30_000,
+  use: { baseURL: "http://127.0.0.1:3000" },
+  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  webServer: {
+    // Same-origin API so the mocked routes need no CORS/preflight handling.
+    command: "NEXT_PUBLIC_POKER_API=http://127.0.0.1:3000 pnpm dev",
+    url: "http://127.0.0.1:3000/poker",
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
+});
+```
+
+- [ ] **Step 3: `e2e/poker.spec.ts`**
+
+A tiny stateful mock for `**/api/session**`:
+- `POST /api/session` → paused preflop state, hero to act (fold/call/bet/all-in).
+- `GET /api/session/:token` → the current mocked state.
+- `POST .../action` → bot calls, hand completes, result = hero win.
+
+Tests:
+1. **deal renders** — hole cards visible, bot seat shows no cards, action buttons present.
+2. **hero action** — click "Call", assert the event log / state updates.
+3. **reload resume** — seed `localStorage["pokerbot.session"]`, mock `GET` to a mid-hand flop state, reload, assert the board renders.
+4. **service down** — `page.route("**/api/**", r => r.abort())`, assert "Table closed" shows.
+
+- [ ] **Step 4: Run**
+
+Run: `pnpm test && pnpm test:e2e`
+Expected: both pass.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add playwright.config.ts e2e/poker.spec.ts package.json pnpm-lock.yaml
+git commit -m "test(poker): add Playwright e2e for the /poker page"
+```
+
+---
+
+### Task 7: Manual e2e against the real service
+
+- [ ] **Step 1: Run the service** (pokerbot worktree)
+
+```bash
+cd /Users/zfdupont/pokerbot/.worktrees/poker-web
+POKERBOT_CHECKPOINT=/Users/zfdupont/pokerbot/sixmax/checkpoints/blueprint.bin \
+  uv run python -m web.main --port 8100
+```
+
+- [ ] **Step 2: Run the site against it**
+
+`NEXT_PUBLIC_POKER_API=http://127.0.0.1:8100 pnpm dev`; open `/poker`, play a few hands, reload mid-hand, finish a hand, force a bust/rebuy. Record the result in the ledger.
 
 ---
 
