@@ -10,6 +10,9 @@ const navItems = {
   '/wnba': {
     name: 'wnba'
   },
+  '/poker': {
+    name: 'poker'
+  },
 }
 
 export function Navbar() {

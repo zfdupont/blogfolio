@@ -16,14 +16,16 @@ import {
 const TOKEN_KEY = "pokerbot.session";
 
 // Owns the session token (persisted so a reload resumes the same stack) and
-// turns API calls into React state. A `busy` ref guards against double-submits.
+// turns API calls into React state. `busyRef` synchronously guards against
+// double-submits; `busy` mirrors it for disabling buttons.
 export function usePokerSession() {
   const [token, setToken] = useState<string | null>(null);
   const [state, setState] = useState<PokerState | null>(null);
   const [events, setEvents] = useState<PokerEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
   const [tableClosed, setTableClosed] = useState(false);
-  const busy = useRef(false);
+  const busyRef = useRef(false);
 
   const apply = useCallback(
     (res: { events: PokerEvent[]; state: PokerState }) => {
@@ -78,38 +80,53 @@ export function usePokerSession() {
     };
   }, [apply, startFresh]);
 
+  const withBusy = useCallback(async (fn: () => Promise<void>) => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setBusy(true);
+    try {
+      await fn();
+    } finally {
+      busyRef.current = false;
+      setBusy(false);
+    }
+  }, []);
+
   const act = useCallback(
-    async (action: string, amount?: number) => {
-      if (!token || !state || busy.current) return;
-      busy.current = true;
-      try {
-        apply(await postAction(token, state.seq, action, amount));
-      } catch (err) {
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
-          setTableClosed(true);
-        } else if (token) {
-          await sync(token).catch(() => {});
+    (action: string, amount?: number) => {
+      if (!token || !state) return;
+      return withBusy(async () => {
+        try {
+          apply(await postAction(token, state.seq, action, amount));
+        } catch (err) {
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            setTableClosed(true);
+          } else {
+            await sync(token).catch(() => {});
+          }
         }
-      } finally {
-        busy.current = false;
-      }
+      });
     },
-    [token, state, apply, sync],
+    [token, state, apply, sync, withBusy],
   );
 
   const runStep = useCallback(
-    async (fn: (tk: string) => Promise<{ events: PokerEvent[]; state: PokerState }>) => {
-      if (!token || busy.current) return;
-      busy.current = true;
-      try {
-        apply(await fn(token));
-      } catch {
-        await sync(token).catch(() => {});
-      } finally {
-        busy.current = false;
-      }
+    (
+      fn: (tk: string) => Promise<{
+        events: PokerEvent[];
+        state: PokerState;
+      }>,
+    ) => {
+      if (!token) return;
+      return withBusy(async () => {
+        try {
+          apply(await fn(token));
+        } catch {
+          await sync(token).catch(() => {});
+        }
+      });
     },
-    [token, apply, sync],
+    [token, apply, sync, withBusy],
   );
 
   const nextHand = useCallback(() => runStep(apiNextHand), [runStep]);
@@ -125,5 +142,15 @@ export function usePokerSession() {
     }
   }, [token, startFresh]);
 
-  return { state, events, loading, tableClosed, act, nextHand, rebuy, cashOut };
+  return {
+    state,
+    events,
+    loading,
+    busy,
+    tableClosed,
+    act,
+    nextHand,
+    rebuy,
+    cashOut,
+  };
 }
