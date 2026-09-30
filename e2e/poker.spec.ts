@@ -15,7 +15,7 @@ const preflop = {
   hero: {
     seat: 0,
     position: "SB",
-    hole_cards: ["As", "Ks"],
+    hole_cards: ["A♥", "K♠"],
     stack: 199,
     current_bet: 1,
     is_actor: true,
@@ -36,7 +36,7 @@ const flop = {
   ...preflop,
   seq: 2,
   street: "flop",
-  community_cards: ["Ah", "Kd", "2c"],
+  community_cards: ["A♦", "K♣", "2♠"],
   current_bet: 0,
   hero: { ...preflop.hero, current_bet: 0 },
   bot: { ...preflop.bot, current_bet: 0 },
@@ -51,7 +51,7 @@ const done = {
   ...preflop,
   seq: 3,
   street: "river",
-  community_cards: ["Ah", "Kd", "2c", "7s", "9h"],
+  community_cards: ["A♦", "K♣", "2♠", "7♥", "9♠"],
   pot: 4,
   current_bet: 0,
   hero: { ...preflop.hero, stack: 202, current_bet: 0, is_actor: false },
@@ -114,8 +114,15 @@ test("deals a hand, shows hero cards and action buttons", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: "Heads-up vs. the bot" }),
   ).toBeVisible();
-  await expect(page.getByText("A♠").first()).toBeVisible();
-  await expect(page.getByText("K♠").first()).toBeVisible();
+  // Backend sends suit symbols; hearts/diamonds must render red (text-red-600),
+  // clubs/spades dark (text-neutral-900).
+  const redCard = page.getByText("A♥", { exact: true });
+  await expect(redCard).toBeVisible();
+  await expect(redCard).toHaveCSS("color", "rgb(220, 38, 38)");
+  await expect(page.getByText("K♠", { exact: true })).toHaveCSS(
+    "color",
+    "rgb(23, 23, 23)",
+  );
   await expect(page.getByRole("button", { name: "Call 1" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Fold" })).toBeVisible();
 });
@@ -171,8 +178,8 @@ test("resumes a mid-hand session on reload", async ({ page }) => {
     window.localStorage.setItem("pokerbot.session", "test-token"),
   );
   await page.goto("/poker");
-  await expect(page.getByText("A♥").first()).toBeVisible(); // board, not hole card
-  await expect(page.getByText("K♦").first()).toBeVisible();
+  await expect(page.getByText("A♦", { exact: true })).toBeVisible(); // board
+  await expect(page.getByText("K♣", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Check" })).toBeVisible();
 });
 

@@ -1,6 +1,4 @@
-import { cardLabel } from "../logic";
-
-const RED_SUITS = new Set(["h", "d"]);
+import { cardLabel, isRedCard } from "../logic";
 
 export function Card({
   card,
@@ -16,7 +14,7 @@ export function Card({
       </div>
     );
   }
-  const red = RED_SUITS.has(card[1]);
+  const red = isRedCard(card);
   return (
     <div
       className={`flex h-16 w-11 items-center justify-center rounded-md border border-neutral-300 bg-white text-lg font-semibold shadow transition-transform duration-200 dark:border-neutral-600 ${

@@ -22,6 +22,14 @@ const SUIT_SYMBOL: Record<string, string> = {
   s: "♠",
 };
 
+// The backend sends suit SYMBOLS (e.g. "A♥"); accept the letter form too for
+// robustness/tests.
+const RED_SUITS = new Set(["♥", "♦", "h", "d"]);
+
+export function isRedCard(card: string): boolean {
+  return RED_SUITS.has(card[1]);
+}
+
 export function parseCard(card: string): { rank: string; suit: string } {
   return { rank: card[0], suit: card[1] };
 }

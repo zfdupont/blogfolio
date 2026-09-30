@@ -6,6 +6,7 @@ import {
   raisePresets,
   isGameOver,
   gameOverMessage,
+  isRedCard,
 } from "./logic";
 
 const state = (over: any = {}) => ({
@@ -29,6 +30,21 @@ describe("cards", () => {
   });
   it("labels a card", () => {
     expect(cardLabel("Ts")).toBe("T♠");
+  });
+});
+
+describe("isRedCard", () => {
+  it("is true for hearts and diamonds (backend symbol form)", () => {
+    expect(isRedCard("A♥")).toBe(true);
+    expect(isRedCard("K♦")).toBe(true);
+  });
+  it("is false for clubs and spades", () => {
+    expect(isRedCard("A♠")).toBe(false);
+    expect(isRedCard("K♣")).toBe(false);
+  });
+  it("also accepts the letter form", () => {
+    expect(isRedCard("Ah")).toBe(true);
+    expect(isRedCard("Kd")).toBe(true);
   });
 });
 
