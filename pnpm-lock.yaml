@@ -25,7 +25,7 @@ importers:
         version: 1.1.3
       '@vercel/speed-insights':
         specifier: ^1.0.9
-        version: 1.0.9(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
+        version: 1.0.9(next@14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -34,13 +34,13 @@ importers:
         version: 5.5.6
       geist:
         specifier: 1.2.2
-        version: 1.2.2(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
+        version: 1.2.2(next@14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       ldrs:
         specifier: ^1.0.2
         version: 1.0.2
       next:
         specifier: canary
-        version: 14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       next-mdx-remote:
         specifier: ^4.4.1
         version: 4.4.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -63,6 +63,9 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.63.0
+        version: 1.63.0
       prettier:
         specifier: 3.3.3
         version: 3.3.3
@@ -283,6 +286,11 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@playwright/test@1.63.0':
+    resolution: {integrity: sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@rollup/rollup-android-arm-eabi@4.63.5':
     resolution: {integrity: sha512-J25QJU+B78T4FhhBsNpLJyVWOi31mwtpcMwywHmOKH65Q9IWGA81gPj+dnwlhU8wktVriYE+tFAaQgrnJRzAZg==}
@@ -1090,6 +1098,16 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg==}
+    engines: {node: '>=20'}
+    hasBin: true
+
   postcss-import@16.1.0:
     resolution: {integrity: sha512-7hsAZ4xGXl4MW+OKEWCnF6T5jqBw80/EE9aXg1r2yyn1RsVEU8EtKXbijEODa+rg7iih4bKf7vlvTGYR4CnPNg==}
     engines: {node: '>=18.0.0'}
@@ -1497,6 +1515,10 @@ snapshots:
   '@next/swc-win32-x64-msvc@14.2.0-canary.62':
     optional: true
 
+  '@playwright/test@1.63.0':
+    dependencies:
+      playwright: 1.63.0
+
   '@rollup/rollup-android-arm-eabi@4.63.5':
     optional: true
 
@@ -1685,9 +1707,9 @@ snapshots:
     dependencies:
       server-only: 0.0.1
 
-  '@vercel/speed-insights@1.0.9(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)':
+  '@vercel/speed-insights@1.0.9(next@14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)':
     optionalDependencies:
-      next: 14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next: 14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react: 18.2.0
 
   '@vitest/expect@2.1.9':
@@ -1888,9 +1910,9 @@ snapshots:
 
   function-bind@1.1.2: {}
 
-  geist@1.2.2(next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)):
+  geist@1.2.2(next@14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)):
     dependencies:
-      next: 14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next: 14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   graceful-fs@4.2.11: {}
 
@@ -2344,7 +2366,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  next@14.2.0-canary.62(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  next@14.2.0-canary.62(@playwright/test@1.63.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@next/env': 14.2.0-canary.62
       '@swc/helpers': 0.5.5
@@ -2365,6 +2387,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 14.2.0-canary.62
       '@next/swc-win32-ia32-msvc': 14.2.0-canary.62
       '@next/swc-win32-x64-msvc': 14.2.0-canary.62
+      '@playwright/test': 1.63.0
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -2397,6 +2420,12 @@ snapshots:
   picocolors@1.1.1: {}
 
   pify@2.3.0: {}
+
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
 
   postcss-import@16.1.0(postcss@8.4.35):
     dependencies:

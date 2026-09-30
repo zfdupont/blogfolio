@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.0.0-alpha.13",
@@ -28,6 +29,7 @@
     "typescript": "5.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "prettier": "3.3.3",
     "vitest": "^2.1.9"
   }
