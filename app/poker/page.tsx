@@ -6,6 +6,7 @@ import { ActionLog } from "./components/ActionLog";
 import { PokerTable } from "./components/PokerTable";
 import { SessionBar } from "./components/SessionBar";
 import { usePokerSession } from "./usePokerSession";
+import { useSound } from "./useSound";
 
 const PRIMARY =
   "rounded-lg bg-emerald-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-emerald-600 disabled:opacity-50";
@@ -22,6 +23,7 @@ export default function PokerPage() {
     rebuy,
     cashOut,
   } = usePokerSession();
+  const { muted, setMuted, play } = useSound();
 
   if (loading) return <Loader />;
 
@@ -40,9 +42,18 @@ export default function PokerPage() {
 
   return (
     <section className="mx-auto w-full max-w-4xl space-y-4">
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Heads-up vs. the bot
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Heads-up vs. the bot
+        </h1>
+        <button
+          onClick={() => setMuted(!muted)}
+          className="rounded-lg border border-neutral-300 px-3 py-1.5 text-sm transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+          aria-pressed={!muted}
+        >
+          {muted ? "🔇 Sound off" : "🔊 Sound on"}
+        </button>
+      </div>
       <SessionBar session={state.session} onCashOut={cashOut} />
       <PokerTable state={state} />
       {state.hand_complete ? (
@@ -65,7 +76,15 @@ export default function PokerPage() {
           )}
         </div>
       ) : (
-        <ActionBar key={state.seq} state={state} disabled={busy} onAction={act} />
+        <ActionBar
+          key={state.seq}
+          state={state}
+          disabled={busy}
+          onAction={(action, amount) => {
+            play();
+            act(action, amount);
+          }}
+        />
       )}
       <ActionLog events={events} />
     </section>
