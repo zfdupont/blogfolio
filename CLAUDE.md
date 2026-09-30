@@ -34,6 +34,18 @@ Blog posts are `.mdx` files in `app/blog/posts/`. To add a post, drop in a new `
 - `app/blog/[slug]/page.tsx` renders a post; `generateStaticParams` statically generates one route per file, and `generateMetadata` builds per-post OpenGraph/Twitter tags (falling back to a generated OG image).
 - `app/components/mdx.tsx` (`CustomMDX`) renders MDX via `next-mdx-remote/rsc` with custom components: auto-slugged headings with anchor links, `sugar-high` syntax highlighting for code, a `Table` component, and internal/external link handling.
 
+### Poker feature
+
+`app/poker/` is a `/poker` page (client component) where a visitor plays a heads-up cash session against the pokerbot. It talks to a separate Python service (`pokerbot-web`, repo `zfdupont/pokerbot`) over REST at `NEXT_PUBLIC_POKER_API` (default `https://poker.zfdupont.com`).
+
+- `app/poker/api.ts` — typed client (`createSession`, `getSession`, `postAction`, `nextHand`, `rebuy`, `cashOut`).
+- `app/poker/usePokerSession.ts` — owns the `localStorage` session token (reload resumes the same stack), an in-flight guard, and 409/404 recovery.
+- `app/poker/logic.ts` — pure helpers (unit-tested with Vitest).
+- `app/poker/components/` — `Card`, `Seat`, `PokerTable`, `ActionBar`, `ActionLog`, `SessionBar`.
+- `e2e/poker.spec.ts` — Playwright e2e; the API is mocked in-browser via `page.route` (same-origin), so it needs no running service and runs in CI.
+
+Scripts: `pnpm test` (Vitest), `pnpm test:e2e` (Playwright; run `pnpm exec playwright install chromium` once).
+
 ### WNBA feature
 
 `app/wnba/page.tsx` is a client component that fetches EPM player ratings and upcoming-game predictions from an **external API** (`/api/epm`, `/api/predictions`, `/api/meta`) via axios, and renders a sortable ratings table plus a predictions table. The API origin is `NEXT_PUBLIC_API_BASE` (defaults to `https://wnba.zfdupont.com`). Because the page is served from `zfdupont.com` and the API lives on the `wnba.` subdomain, requests are **cross-origin**: the API must allow `https://zfdupont.com` via CORS (`ALLOWED_ORIGINS`). Rows are filtered to players with >500 possessions, and the page tolerates a `503` "artifacts not ready" response without rendering broken cells.
