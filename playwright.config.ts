@@ -1,16 +1,19 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const PORT = 3100;
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 30_000,
-  use: { baseURL: "http://127.0.0.1:3000" },
+  use: { baseURL: `http://127.0.0.1:${PORT}` },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    // Same-origin API so the mocked routes below need no CORS/preflight, and
-    // no running pokerbot-web service is required (CI-friendly).
-    command: "NEXT_PUBLIC_POKER_API=http://127.0.0.1:3000 pnpm dev",
-    url: "http://127.0.0.1:3000/poker",
-    reuseExistingServer: !process.env.CI,
+    // Dedicated port so a running `pnpm dev` on :3000 is never reused with the
+    // wrong API origin. Same-origin API so the mocked routes need no
+    // CORS/preflight and no running pokerbot-web service is required.
+    command: `PORT=${PORT} NEXT_PUBLIC_POKER_API=http://127.0.0.1:${PORT} pnpm dev`,
+    url: `http://127.0.0.1:${PORT}/poker`,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 });

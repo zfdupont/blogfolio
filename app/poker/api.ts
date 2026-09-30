@@ -22,6 +22,7 @@ export interface PokerState {
   community_cards: string[];
   pot: number;
   current_bet: number;
+  big_blind: number;
   hero: {
     seat: number;
     position: string | null;

@@ -11,6 +11,7 @@ const preflop = {
   community_cards: [] as string[],
   pot: 3,
   current_bet: 2,
+  big_blind: 2,
   hero: {
     seat: 0,
     position: "SB",
@@ -117,6 +118,31 @@ test("submits a hero action and shows the result", async ({ page }) => {
   await page.goto("/poker");
   await page.getByRole("button", { name: "Call 1" }).click();
   await expect(page.getByText("hero: call 1").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Next hand" })).toBeVisible();
+});
+
+test("raise opens a sizing panel with presets, back, and escape", async ({
+  page,
+}) => {
+  await mockApi(page);
+  await page.goto("/poker");
+  await page.getByRole("button", { name: "Raise", exact: true }).click();
+  await expect(page.getByText("Your bet")).toBeVisible();
+  for (const label of ["Min raise", "1/2 pot", "3/4 pot", "Pot", "All in"]) {
+    await expect(
+      page.getByRole("button", { name: label, exact: true }),
+    ).toBeVisible();
+  }
+  // Escape closes it and the main bar returns.
+  await page.keyboard.press("Escape");
+  await expect(page.getByText("Your bet")).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "Raise", exact: true }),
+  ).toBeVisible();
+  // Reopen, pick a preset, and submit.
+  await page.getByRole("button", { name: "Raise", exact: true }).click();
+  await page.getByRole("button", { name: "Pot", exact: true }).click();
+  await page.getByRole("button", { name: "Raise", exact: true }).click();
   await expect(page.getByRole("button", { name: "Next hand" })).toBeVisible();
 });
 
