@@ -62,6 +62,13 @@ const done = {
   session: { start_stack: 200, stack: 202, net: 2, hands_played: 1 },
 };
 
+const botBust = {
+  ...done,
+  bot: { stack: 0, current_bet: 0 },
+  result: { pot: 400, winners: [{ actor: "hero" }] },
+  session: { start_stack: 200, stack: 400, net: 200, hands_played: 1 },
+};
+
 const preflopEvents = [
   { type: "hand_start", button: 0, hero_pos: "SB" },
   { type: "street", name: "preflop", board: [] },
@@ -144,6 +151,18 @@ test("raise opens a sizing panel with presets, back, and escape", async ({
   await page.getByRole("button", { name: "Pot", exact: true }).click();
   await page.getByRole("button", { name: "Raise", exact: true }).click();
   await expect(page.getByRole("button", { name: "Next hand" })).toBeVisible();
+});
+
+test("shows a game-over message and New game when a stack hits zero", async ({
+  page,
+}) => {
+  await mockApi(page, { after: botBust });
+  await page.goto("/poker");
+  await page.getByRole("button", { name: "Call 1" }).click();
+  await expect(page.getByText(/broke the bot/)).toBeVisible();
+  await page.getByRole("button", { name: "New game" }).click();
+  // Fresh session -> a new preflop hand with the hero to act.
+  await expect(page.getByRole("button", { name: "Call 1" })).toBeVisible();
 });
 
 test("resumes a mid-hand session on reload", async ({ page }) => {

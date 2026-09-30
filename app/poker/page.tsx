@@ -5,6 +5,7 @@ import { ActionBar } from "./components/ActionBar";
 import { ActionLog } from "./components/ActionLog";
 import { PokerTable } from "./components/PokerTable";
 import { SessionBar } from "./components/SessionBar";
+import { gameOverMessage, isGameOver } from "./logic";
 import { usePokerSession } from "./usePokerSession";
 import { useSound } from "./useSound";
 
@@ -20,8 +21,8 @@ export default function PokerPage() {
     tableClosed,
     act,
     nextHand,
-    rebuy,
     cashOut,
+    newGame,
   } = usePokerSession();
   const { muted, setMuted, play } = useSound();
 
@@ -38,7 +39,7 @@ export default function PokerPage() {
     );
   }
 
-  const busted = state.session.stack <= 0;
+  const gameOver = isGameOver(state);
 
   return (
     <section className="mx-auto w-full max-w-4xl space-y-4">
@@ -58,21 +59,28 @@ export default function PokerPage() {
       <PokerTable state={state} />
       {state.hand_complete ? (
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-sm text-neutral-600 dark:text-neutral-400">
-            {state.result
-              ? `Won by ${state.result.winners
-                  .map((w) => w.actor)
-                  .join(", ")} · pot ${state.result.pot}`
-              : "Hand complete"}
-          </span>
-          {busted ? (
-            <button className={PRIMARY} disabled={busy} onClick={rebuy}>
-              Rebuy
-            </button>
+          {gameOver ? (
+            <>
+              <span className="text-base font-medium">
+                {gameOverMessage(state)}
+              </span>
+              <button className={PRIMARY} disabled={busy} onClick={newGame}>
+                New game
+              </button>
+            </>
           ) : (
-            <button className={PRIMARY} disabled={busy} onClick={nextHand}>
-              Next hand
-            </button>
+            <>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                {state.result
+                  ? `Won by ${state.result.winners
+                      .map((w) => w.actor)
+                      .join(", ")} · pot ${state.result.pot}`
+                  : "Hand complete"}
+              </span>
+              <button className={PRIMARY} disabled={busy} onClick={nextHand}>
+                Next hand
+              </button>
+            </>
           )}
         </div>
       ) : (

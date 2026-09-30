@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { parseCard, cardLabel, actionButtons, raisePresets } from "./logic";
+import {
+  parseCard,
+  cardLabel,
+  actionButtons,
+  raisePresets,
+  isGameOver,
+  gameOverMessage,
+} from "./logic";
 
 const state = (over: any = {}) => ({
   seq: 0,
@@ -48,6 +55,30 @@ describe("actionButtons", () => {
     const bet = actionButtons(state()).find((b) => b.key === "bet");
     expect(bet?.min).toBe(4);
     expect(bet?.max).toBe(200);
+  });
+});
+
+describe("game over", () => {
+  const over = (heroStack: number, botStack: number) => ({
+    hand_complete: true,
+    hero: { stack: heroStack },
+    bot: { stack: botStack },
+  });
+  it("is not over mid-hand even with a zero stack", () => {
+    expect(isGameOver({ hand_complete: false, hero: { stack: 0 }, bot: { stack: 0 } })).toBe(
+      false,
+    );
+  });
+  it("is not over while both have chips", () => {
+    expect(isGameOver(over(100, 100))).toBe(false);
+  });
+  it("is over when either stack hits zero", () => {
+    expect(isGameOver(over(0, 200))).toBe(true);
+    expect(isGameOver(over(200, 0))).toBe(true);
+  });
+  it("messages the winner correctly", () => {
+    expect(gameOverMessage(over(0, 200))).toMatch(/out of chips/);
+    expect(gameOverMessage(over(200, 0))).toMatch(/broke the bot/);
   });
 });
 

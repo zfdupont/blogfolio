@@ -132,15 +132,23 @@ export function usePokerSession() {
   const nextHand = useCallback(() => runStep(apiNextHand), [runStep]);
   const rebuy = useCallback(() => runStep(apiRebuy), [runStep]);
 
-  const cashOut = useCallback(async () => {
-    if (token) await apiCashOut(token).catch(() => {});
+  // Start a fresh table (new token, stacks back to the starting amount).
+  const newGame = useCallback(async () => {
     window.localStorage.removeItem(TOKEN_KEY);
+    setBusy(true);
     try {
       await startFresh();
     } catch {
       setTableClosed(true);
+    } finally {
+      setBusy(false);
     }
-  }, [token, startFresh]);
+  }, [startFresh]);
+
+  const cashOut = useCallback(async () => {
+    if (token) await apiCashOut(token).catch(() => {});
+    await newGame();
+  }, [token, newGame]);
 
   return {
     state,
@@ -152,5 +160,6 @@ export function usePokerSession() {
     nextHand,
     rebuy,
     cashOut,
+    newGame,
   };
 }

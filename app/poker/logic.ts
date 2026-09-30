@@ -35,6 +35,19 @@ export function formatNet(net: number): string {
   return `${net >= 0 ? "+" : ""}${net}`;
 }
 
+// A table is over once a hand ends with either stack at zero.
+export function isGameOver(state: any): boolean {
+  return (
+    !!state?.hand_complete && (state.hero.stack <= 0 || state.bot.stack <= 0)
+  );
+}
+
+export function gameOverMessage(state: any): string {
+  return state.hero.stack <= 0
+    ? "You're out of chips — the bot wins the table."
+    : "You broke the bot — you win the table!";
+}
+
 export function clampAmount(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, Math.round(value)));
 }
